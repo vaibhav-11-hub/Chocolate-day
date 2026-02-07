@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chocolate Day Special</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(to right, #8b4513, #d2691e);
+    text-align: center;
+}
+
+.screen {
+    display: none;
+    padding: 20px;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.active {
+    display: flex;
+}
+
+.box {
+    background: #fff7ec;
+    padding: 35px;
+    border-radius: 25px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.25);
+    max-width: 470px;
+    width: 100%;
+    border: 2px solid #8b4513;
+}
+
+input {
+    padding: 14px;
+    width: 90%;
+    margin: 15px 0;
+    font-size: 16px;
+    border-radius: 12px;
+    border: 2px solid #d2691e;
+}
+
+button {
+    padding: 14px 24px;
+    margin: 10px;
+    font-size: 17px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+.yes {
+    background: #8b4513;
+    color: white;
+}
+
+.no {
+    background: #222;
+    color: white;
+}
+
+.choco-grow {
+    font-size: 80px;
+    animation: grow 3s infinite;
+}
+
+@keyframes grow {
+    0% { transform: scale(0.6); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(0.6); }
+}
+
+.floating-chocos {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.choco {
+    position: absolute;
+    font-size: 34px;
+    animation: float 4s linear infinite;
+}
+
+@keyframes float {
+    from { transform: translateY(100vh); }
+    to { transform: translateY(-10vh); }
+}
+
+img {
+    max-width: 240px;
+    margin: 15px;
+    border-radius: 20px;
+}
+
+h1, h2, h3 {
+    margin-bottom: 12px;
+    color: #5a2d0c;
+    font-weight: 600;
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.title {
+    font-size: 26px;
+}
+
+.final-choco {
+    font-size: 110px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+.magic-box {
+    background: #ffe4c4;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<audio id="chocoSound" src="https://www.soundjay.com/misc/sounds/magic-chime-02.mp3"></audio>
+
+<!-- NAME SCREEN -->
+<div class="screen active" id="nameScreen">
+    <div class="box">
+        <h2 class="title">Chocolate ka scene hai 🍫</h2>
+        <p>Sabse pehle batao – yeh chocolate kis ke liye?</p>
+
+        <input id="nameInput" placeholder="Sweet person ka naam likho" />
+
+        <button class="yes" onclick="saveName()">
+            Start Chocolate Magic ✨
+        </button>
+    </div>
+</div>
+
+<!-- GROWING -->
+<div class="screen" id="growScreen">
+    <h2 id="growText"></h2>
+    <div class="choco-grow">🍫</div>
+    <p>Chocolate special delivery prepare ho rahi hai 😄</p>
+</div>
+
+<!-- CHOICE -->
+<div class="screen" id="choiceScreen">
+    <div class="box">
+        <h2 id="mainText"></h2>
+        <p>Yeh tasty chocolate sirf tumhare liye hai 🍫</p>
+
+        <img src="gun-cat.gif" alt="funny cat">
+
+        <h3>Seedha seedha chocolate le lo 😼</h3>
+
+        <button class="yes" onclick="yesPage()">Haan de do 😄</button>
+        <button class="no" onclick="noPage()">Mujhe nahi chahiye 🙃</button>
+    </div>
+</div>
+
+<!-- YES SCREEN -->
+<div class="screen" id="yesScreen">
+    <div class="floating-chocos" id="chocos"></div>
+
+    <div class="box">
+        <h1 id="yesText"></h1>
+
+        <div class="final-choco">🍫</div>
+
+        <div class="magic-box">
+            <p>
+                Dekha… itna bhi bhaav nahi khana chahiye 😄  
+                Ab chocolate mil gayi hai toh  
+                roz time pe BGMI khelne aana 😜  
+                Aur zyada drama mat karna!
+            </p>
+        </div>
+
+        <p style="margin-top:10px;">
+            Screenshot le lo –  
+            proof rahega ki chocolate mil chuki hai 😉
+        </p>
+    </div>
+</div>
+
+<!-- NO SCREEN -->
+<div class="screen" id="noScreen">
+    <div class="box">
+        <img src="crying-cat.webp" alt="crying cat">
+
+        <h2 id="noText"></h2>
+
+        <p>Chocolate ko mana kaise kar sakti ho 😭</p>
+
+        <button class="yes" onclick="backToYes()">
+            Achha achha... de do chocolate 😅
+        </button>
+    </div>
+</div>
+
+
+<script>
+let personName = "";
+
+function playMagic() {
+    document.getElementById("chocoSound").play();
+}
+
+function saveName() {
+    const input = document.getElementById("nameInput").value;
+
+    if (input.trim() === "") {
+        alert("Naam likhna zaroori hai 😄");
+        return;
+    }
+
+    personName = input;
+
+    document.getElementById("nameScreen").classList.remove("active");
+    document.getElementById("growScreen").classList.add("active");
+
+    document.getElementById("growText").innerHTML =
+        personName + " ke liye tasty chocolate ready ho rahi hai 🍫";
+
+    setTimeout(() => {
+        showChoice();
+    }, 3000);
+}
+
+function showChoice() {
+    document.getElementById("growScreen").classList.remove("active");
+    document.getElementById("choiceScreen").classList.add("active");
+
+    document.getElementById("mainText").innerHTML =
+        "Heyy " + personName + " 😄";
+}
+
+function yesPage() {
+    playMagic();
+
+    document.getElementById("choiceScreen").classList.remove("active");
+    document.getElementById("noScreen").classList.remove("active");
+    document.getElementById("yesScreen").classList.add("active");
+
+    document.getElementById("yesText").innerHTML =
+        "Yay! " + personName + " ne chocolate accept kar li 🍫";
+
+    startChocos();
+}
+
+function noPage() {
+    document.getElementById("choiceScreen").classList.remove("active");
+    document.getElementById("noScreen").classList.add("active");
+
+    document.getElementById("noText").innerHTML =
+        "Please na " + personName + " 🥺 <br> chocolate mana mat karo yaar";
+}
+
+function backToYes() {
+    yesPage();
+}
+
+function startChocos() {
+    const container = document.getElementById("chocos");
+    container.innerHTML = "";
+
+    for (let i = 0; i < 45; i++) {
+        let choco = document.createElement("div");
+        choco.className = "choco";
+        choco.innerHTML = "🍫";
+        choco.style.left = Math.random() * 100 + "vw";
+        choco.style.animationDuration = Math.random() * 3 + 2 + "s";
+        container.appendChild(choco);
+    }
+}
+</script>
+
+</body>
+</html>
